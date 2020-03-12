@@ -46,12 +46,23 @@ print(Par1.X,Par1.Y,Par1.Z,Par1.VX,Par1.VY,Par1.VZ,Par1.M,Par1.q)
 print(Par2.X,Par2.Y,Par2.Z,Par2.VX,Par2.VY,Par2.VZ,Par2.M,Par2.q)
 print("\n")
 
+x1=np.array([])
+y1=np.array([])
+z1=np.array([])
+x22=np.array([])
+y22=np.array([])
+z22=np.array([])
 
 for i in range(1,10001):
     Par11=np.array([Par1.X,Par1.Y,Par1.Z,Par1.VX,Par1.VY,Par1.VZ,Par1.M,Par1.q])
     Par1.Pos_evol(Par2.X, Par2.Y, Par2.Z, Par2.q, 0.01)        
     Par2.Pos_evol(Par11[0], Par11[1], Par11[2], Par11[7], 0.01)
-        
+    x1=np.append(x1,Par1.X)
+    y1=np.append(y1,Par1.Y)
+    z1=np.append(z1,Par1.Z)
+    x22=np.append(x22,Par2.X)
+    y22=np.append(y22,Par2.Y)
+    z22=np.append(z22,Par2.Z)
 
 print("Los estados de las particulas despues de 10 mil iteraciones son:")
 print(Par1.X,Par1.Y,Par1.Z,Par1.VX,Par1.VY,Par1.VZ,Par1.M,Par1.q)
@@ -59,10 +70,13 @@ print(Par2.X,Par2.Y,Par2.Z,Par2.VX,Par2.VY,Par2.VZ,Par2.M,Par2.q)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(Par1.X,Par1.Y,Par1.Z,c='g')
-ax.scatter(Par2.X,Par2.Y,Par2.Z,c='b')
+
+ax.plot(x1,y1,z1,c='g',linewidth=0.7)
+ax.plot(x22,y22,z22,c='b',linewidth=0.7)
+ax.scatter(Par1.X,Par1.Y,Par1.Z,c='r')
+ax.scatter(Par2.X,Par2.Y,Par2.Z,c='r')
+
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 ax.set_zlabel("z")
 plt.savefig("SegClasesPython.png")
-plt.show()
