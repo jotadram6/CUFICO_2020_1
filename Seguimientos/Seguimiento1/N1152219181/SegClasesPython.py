@@ -11,19 +11,22 @@ class Particula:
         self.X=x
         self.Y=y
         self.Z=z
-        self.VX=vx
-        self.VY=vy
-        self.VZ=vz
+        self.Vx=vx
+        self.Vy=vy
+        self.Vz=vz
         self.M=m
         self.Bz=bz
         self.Carga=carga
-    def Pos_evol(self,t):
-        w=self.Bz*self.Carga/self.M;
-        self.X=(self.VX*np.sin(w*t)+self.VY*(1-np.cos(w*t))/w) ;
-        self.Y=(self.VY*np.sin(w*t)+self.VX*(np.cos(w*t)-1)/w) ;	 
-        self.Z=self.VZ*t;
-Par1=Particula(0.0,0.0,0.0,1.0,0.0,1.0,10.0,10.0,1)
-Par2=Particula(1.0,0.0,0.0,-1.0,0.0,1.0,10.0,10.0,1)  
+    def Pos_evol(self,Fx,Fy,Fz,t):
+       self.X=self.X+self.Vx*t+(0.5*t*t*Fx/self.M) 
+       self.Y=self.Y+self.Vy*t+(0.5*t*t*Fy/self.M)       
+       self.Z=self.Z+self.Vy*t+(0.5*t*t*Fz/self.M)   
+       self.Vx=self.Vx+(Fx*t/self.M)
+       self.Vy=self.Vy+(Fy*t/self.M)
+       self.Vz=self.Vz+(Fz*t/self.M)
+
+Par1=Particula(0.0,0.0,0.0,0.0,0.0,0.0,10.0,10.0,1)
+Par2=Particula(1.0,0.0,0.0,0.0,0.0,0.0,10.0,10.0,-1)  
 #print(Par1.X,Par1.Y,Par1.Z,Par1.VX,Par1.VY,Par1.VZ,Par1.M,Par1.Carga)
 x1=[]
 y1=[]
@@ -33,12 +36,23 @@ x2=[]
 y2=[]
 z2=[]
 for i in range(10000):
-    Par1.Pos_evol(i*0.01)
+    if ((Par2.X-Par1.X)**(2) + (Par2.Y-Par1.Y)**(2) + (Par2.Z-Par1.Z)**2)==0: break
+    #Particula 1
+    Fx1=(Par1.Vy*Par1.Bz*Par1.Carga)+((Par1.Carga*Par2.Carga)*(Par1.X-Par2.X)/((4*np.pi*(8.8541e-12))*((Par1.X-Par2.X)**(2)+(Par1.Y-Par2.Y)**(2)+(Par1.Z-Par2.Z)**(2))**(3/2)))
+    Fy1=-(Par1.Vx*Par1.Bz*Par1.Carga)+((Par1.Carga*Par2.Carga)*(Par1.Y-Par2.Y)/((4*np.pi*(8.8541e-12))*((Par1.X-Par2.X)**(2)+(Par1.Y-Par2.Y)**(2)+(Par1.Z-Par2.Z)**(2))**(3/2)))
+    Fz1=((Par1.Carga*Par2.Carga)*(Par1.Z-Par2.Z)/((4*np.pi*(8.8541e-12))*((Par1.X-Par2.X)**(2)+(Par1.Y-Par2.Y)**(2)+(Par1.Z-Par2.Z)**(2))**(3/2)))
+    
+    #Particula 2
+    Fx2=(Par2.Vy*Par2.Bz*Par2.Carga)+((Par1.Carga*Par2.Carga)*(Par2.X-Par1.X)/((4*np.pi*(8.8541e-12))*((Par1.X-Par2.X)**(2)+(Par1.Y-Par2.Y)**(2)+(Par1.Z-Par2.Z)**(2))**(3/2)))
+    Fy2=-(Par2.Vx*Par2.Bz*Par2.Carga)+((Par1.Carga*Par2.Carga)*(Par2.Y-Par1.Y)/((4*np.pi*(8.8541e-12))*((Par1.X-Par2.X)**(2)+(Par1.Y-Par2.Y)**(2)+(Par1.Z-Par2.Z)**(2))**(3/2)))
+    Fz2=((Par1.Carga*Par2.Carga)*(Par2.Z-Par1.Z)/((4*np.pi*(8.8541e-12))*((Par1.X-Par2.X)**(2)+(Par1.Y-Par2.Y)**(2)+(Par1.Z-Par2.Z)**(2))**(3/2)))
+    
+    Par1.Pos_evol(Fx1,Fy1,Fz1,0.1)
     x1.append(Par1.X)
     y1.append(Par1.Y)
     z1.append(Par1.Z)
     
-    Par2.Pos_evol(i*0.01)
+    Par2.Pos_evol(Fx2,Fy2,Fz2,0.1)
     
     x2.append(Par2.X)
     y2.append(Par2.Y)
